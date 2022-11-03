@@ -29,6 +29,6 @@ abstract public class Habit {
     //    System.out.println(formatter.format(date));
 
     enum Category{
-        Sport,Uni,Arbeit,
+        Sport,Uni,Arbeit
     }
 }

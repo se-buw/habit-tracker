@@ -3,12 +3,12 @@ package de.buw.se4de;
 import java.util.Vector;
 
 public class User {
-    int id;
+    int uid;
     String username;
     Vector<Habit> habitvec;
 
     public User(String un){
-        this.id = getnewid();
+        this.uid = getnewid();
         this.username = un;
     }
 
@@ -20,9 +20,12 @@ public class User {
         //TODO öffnet fenster für stats
 
     }
-    public boolean addhabit(int id){
+    public boolean addhabit(Habit h,DBReader dbr){
         //TODO return false if exception true if it works, adds habit to DB
-        return true;
+        if (dbr.inserthabit(h)){
+            return true;
+        }
+        return false;
     }
     public boolean removehabbit(int id){
         //TODO return false if exception true if it works, removes habit from DB

@@ -12,7 +12,7 @@ public class DBReader {
          Vector<Habit> habvec= new Vector<Habit>();
          return habvec;
      }
-     public boolean inserthabit(int id){
+     public boolean inserthabit(Habit h){
          //TODO
          return true;
      }
