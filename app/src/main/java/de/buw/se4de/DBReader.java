@@ -1,5 +1,8 @@
 package de.buw.se4de;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
 
@@ -8,7 +11,7 @@ public class DBReader {
     public DBReader(String path){
         this.path = path;
     }
-     public Vector<Habit> gethabits(){
+     public Vector<Habit> gethabits() {
          Vector<Habit> habvec= new Vector<Habit>();
          return habvec;
      }
@@ -24,4 +27,9 @@ public class DBReader {
           //TODO
          return true;
      }
+    public static void main(String[] a) throws Exception {
+        Connection conn = DriverManager.getConnection("jdbc:h2:~/test", "sa", "");
+        // add application code here
+        conn.close();
+    }
 }

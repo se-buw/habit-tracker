@@ -7,15 +7,63 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import java.util.Scanner;
 import java.util.logging.Logger;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 public class App {
-	public String getGreeting() {
+	public String getGreeting() throws Exception {
+		String result = "";
+
+		Class.forName("org.h2.Driver");
+		Connection conn = DriverManager.getConnection("jdbc:h2:./app/src/main/resources/h2User", "", "");
+
+		Statement stmt = conn.createStatement();
+
+		String createUSER = "CREATE TABLE IF NOT EXISTS UserDB" + "(ID INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, NAME VARCHAR(255))";
+		//String createHABITS = "CREATE TABLE IF NOT EXISTS HABITS" + "(ID INT, PRIMARY INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL,  HABITNAME VARCHAR(255),HABITDESCIPTION ,HABITCYCLE)";
+		//String createTRACKER = "CREATE TABLE IF NOT EXISTS TRACKER" + "(HABITID, DATE Date)";
+
+		stmt.executeUpdate(createUSER);
+		//stmt.executeUpdate(createHABITS);
+		//stmt.executeUpdate(createTRACKER);
+
+		//
+		System.out.println("Type your username");
+		Scanner myObj = new Scanner(System.in);
+		//
+		String username = myObj.nextLine();
+		String query = "INSERT INTO UserDB (NAME) VALUES('" + username + "')";
+		stmt.executeUpdate(query);
+
+
+		//stmt.executeUpdate("INSERT INTO Test (NAME) VALUES('Hello World!')");
+		//stmt.executeUpdate("INSERT INTO Test (NAME) VALUES('Hello again!')");
+		//stmt.executeUpdate("INSERT INTO Test (NAME) VALUES('Bye!')");
+
+		ResultSet selectRS = stmt.executeQuery("SELECT * FROM UserDB");
+		while (selectRS.next()) {
+			System.out.printf("%d, %s\n", selectRS.getInt(1), selectRS.getString(2));
+		}
+		//System.out.printf("%d, %s\n", selectRS.getInt(1), selectRS.getString(2));
+		return result;
+	}
+
+	public static void main(String[] args) throws Exception {
+		System.out.println(new App().getGreeting());
+	}
+
+	/*public String getGreeting() {
 		String result = "";
 		try (Reader reader = Files.newBufferedReader(Paths.get("app/src/main/resources/book.csv"));
 				@SuppressWarnings("deprecation")
@@ -36,7 +84,7 @@ public class App {
 		System.out.println("Hello " + inputString + "!");
 		scanner.close();
 		return result;
-	}
+	}*/
 
 	/*public static void main(String[] args) {
 		System.out.println(new App().getGreeting());

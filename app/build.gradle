@@ -26,6 +26,9 @@ dependencies {
     // working with CSV files
     // https://github.com/eugenp/tutorials/tree/master/libraries-apache-commons-io
     implementation 'org.apache.commons:commons-csv:1.9.0'
+
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    implementation 'com.h2database:h2:2.1.212'
 }
 
 application {
