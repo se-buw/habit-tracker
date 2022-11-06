@@ -48,7 +48,12 @@ public class TerminalMain {
                         System.out.println("Habit description:");
                         String desc = myObj.nextLine();
                         //TODO: make the enum work with strings (maybe custom enums ?)
-                        currentuser.habitvec.add(dbr.inserthabit(new Habit(name,desc, Habit.Category.Uni),currentuser));
+                        Habit h = new Habit(name,desc, Habit.Category.Uni);
+                        if(dbr.inserthabit(h,currentuser))
+                            currentuser.habitvec.add(h);
+                        else{
+                            System.out.println("Something went wrong please try again");
+                        }
                     }
                     break;
                 case "Track Habit":
@@ -123,6 +128,8 @@ public class TerminalMain {
                         System.out.printf("%s,",d.toString());
                     }
                     System.out.print("\n");
+                case "Exit":
+                    return;
             }
         }
     }

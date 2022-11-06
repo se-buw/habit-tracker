@@ -17,20 +17,12 @@ public class User {
     public static int gethabbitid() {
         return 0;
     }
-
-    public void checkstats(){
-        //TODO öffnet fenster für stats
-
-    }
     public void addhabit(Habit h){
         habitvec.add(h);
     }
-    public void removehabbit(int id){
+    public void removehabbit(Habit h){
+        habitvec.remove(h);
         //TODO return false if exception true if it works, removes habit from DB
-    }
-
-    public void checkoffhabit(){
-        //TODO ÄMMELIE MACHT DAS SCHON DW
     }
     private int getnewid(){
         return 0;//TODO id zuweisung

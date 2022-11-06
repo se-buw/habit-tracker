@@ -39,8 +39,7 @@ public class DBReader {
         }
 
     }
-    public Vector<User> getusers() {
-        Vector<User> uservec= new Vector<>();
+    public boolean getusers(Vector<User> uservec) {
         String getuserquery = "Select * From USERDB";
         try {
             ResultSet selectRS = stmt.executeQuery(getuserquery);
@@ -54,8 +53,9 @@ public class DBReader {
             }
         }catch (SQLException e){
             System.out.printf("Cannot retrieve Users from Database: %d\n",e.getErrorCode());
+            return false;
         }
-        return uservec;
+        return true;
     }
     public Vector<Habit> gethabits(User u) {
         Vector<Habit> habvec= new Vector<>();
@@ -72,7 +72,7 @@ public class DBReader {
         }
         return habvec;
     }
-     public Habit inserthabit(@NotNull Habit h, @NotNull User u){//TODO maybe dont return Habit when u can change it ?!?
+     public boolean inserthabit(@NotNull Habit h, @NotNull User u){//TODO maybe dont return Habit when u can change it ?!?
          String inserthabit = "INSERT INTO HabitDB (Userid,Habitname,Habitdescription,Startdate,Habitcycle,Habitcategory)"
                  + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "'," + h.cycle +",'" + h.category.name() + "')";
          String gethabtidid = "Select Habitid FROM HABITDB WHERE Habitname = '"+ h.name  +"' ORDER BY Userid DESC Limit 1";
@@ -83,9 +83,9 @@ public class DBReader {
              h.habitid = habitid.getInt("Habitid");
          }catch (SQLException e){
              System.out.printf("Cannot insert Habit: %d\n",e.getErrorCode());
-             return new Habit("", Habit.Category.Uni);
+             return false;
          }
-         return h;
+         return true;
      }
     public User insertuser(String username){
         String insertuser = "INSERT INTO USERDB (Username) VALUES('"+ username +"')";
@@ -112,7 +112,7 @@ public class DBReader {
          }
          return true;
      }
-     public void deleteuser(User u){
+     public boolean deleteuser(User u){
         String duquery = "DELETE FROM USERDB WHERE Userid ="+ u.uid;
         String duhquery = "DELETE FROM HABITDB WHERE Userid = " + u.uid;
         String fhabitquery = "SELECT Habitid FROM HABITDB Where Userid = " + u.uid;
@@ -132,7 +132,9 @@ public class DBReader {
 
         }catch(SQLException e){
             System.out.printf("Cannot Delete User/Habit/Tracker: %d\n",e.getErrorCode());
+            return false;
         }
+        return true;
      }
      public boolean trackhabit(Habit h, Date d){
         String query = "INSERT INTO TRACKERDB (HABITID,DONEDATE) VALUES(" + h.habitid + ",'" + new java.sql.Date(d.getTime()) + "')";
@@ -143,6 +145,16 @@ public class DBReader {
             return false;
         }
          return true;
+     }
+     public boolean untrackhabit(Habit h, Date d){
+        String query = "DELETE FROM TRACKERDB WHERE Habitid =" + h.habitid + " and Donedate = '" + new java.sql.Date(d.getTime()) +"'";
+        try{
+            stmt.executeUpdate(query);
+        } catch (SQLException e){
+            System.out.printf("Cannot delete Tracked Habit: %d\n",e.getErrorCode());
+            return false;
+        }
+        return true;
      }
      public Vector<Date> getdates(Habit h){
         Vector<Date> dvec = new Vector<>();
