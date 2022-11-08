@@ -8,11 +8,8 @@ public class StartUp {
         dbr.InitializeDB();
         Vector<User> uservec = new Vector<>();
         dbr.getusers(uservec);
-        TerminalMain l = new TerminalMain(uservec,dbr);
-        l.Mainloop();
-
         //System.out.println("Done");
-        new MainWindow("Habit Tracker");
+        new MainWindow("Habit Tracker",uservec,dbr);
 
     }
 }

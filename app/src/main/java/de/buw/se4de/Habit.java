@@ -10,7 +10,7 @@ public class Habit {
     public Date startdate;
     public Category category;
     public int habitid;
-    public int cycle;
+    public float cycle;
 
     public Habit(String n,String d,Category c){
         name = n;
@@ -20,11 +20,12 @@ public class Habit {
         habitid = -1;
     }
 
-    public Habit(int id,String n,String d,Date sd,int cycle,Category c){
+    public Habit(int id,String n,String d,Date sd,float cyc,Category c){
         name = n;
         description = d;
         category = c;
         startdate = sd;
+        cycle = cyc;
         habitid = id;//TODO add Cycle
     }
     enum Category{

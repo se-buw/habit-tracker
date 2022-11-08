@@ -65,14 +65,14 @@ public class DBReader {
             while (selectH.next()) {
                 habvec.add(new Habit(selectH.getInt("Habitid"), selectH.getString("Habitname"),
                         selectH.getString("Habitdescription"), selectH.getDate("Startdate"),
-                        selectH.getInt("Habitcycle"), Habit.Category.Uni /*.getString("Habitcategory")*/));//TODO Denk An die Kategorie
+                        selectH.getInt("Habitcycle"),   Habit.Category.valueOf(selectH.getString("Habitcategory"))));//TODO (Category) I think this works ?
             }
         }catch(SQLException e){
             System.out.printf("Cannot retrieve habits of User %s: %d",u.username,e.getErrorCode());
         }
         return habvec;
     }
-     public boolean inserthabit(@NotNull Habit h, @NotNull User u){//TODO maybe dont return Habit when u can change it ?!?
+     public boolean inserthabit(@NotNull Habit h, @NotNull User u){
          String inserthabit = "INSERT INTO HabitDB (Userid,Habitname,Habitdescription,Startdate,Habitcycle,Habitcategory)"
                  + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "'," + h.cycle +",'" + h.category.name() + "')";
          String gethabtidid = "Select Habitid FROM HABITDB WHERE Habitname = '"+ h.name  +"' ORDER BY Userid DESC Limit 1";
@@ -170,3 +170,4 @@ public class DBReader {
         return dvec;
      }
 }
+//BIG FUCKING TODO!!!!!! Schedule the fucking habits ?
