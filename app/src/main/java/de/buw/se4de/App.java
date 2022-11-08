@@ -3,90 +3,76 @@
  */
 package de.buw.se4de;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import java.util.Scanner;
-import java.util.logging.Logger;
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 public class App {
-	public String getGreeting() throws Exception {
+	public String getGreeting() {
+		try{
 		String result = "";
 
 		Class.forName("org.h2.Driver");
 		Connection conn = DriverManager.getConnection("jdbc:h2:./app/src/main/resources/h2User", "", "");
+		//Connection connHabit = DriverManager.getConnection("jdbc:h2:./app/src/main/resources/h2Habit", "", "");
 
-		Statement stmt = conn.createStatement();
+		Statement Ustmt = conn.createStatement();
+		Statement Hstmt = conn.createStatement();
+		Statement Tstmt = conn.createStatement();
 
-		String createUSER = "CREATE TABLE IF NOT EXISTS UserDB" + "(ID INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, NAME VARCHAR(255))";
-		//String createHABITS = "CREATE TABLE IF NOT EXISTS HABITS" + "(ID INT, PRIMARY INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL,  HABITNAME VARCHAR(255),HABITDESCIPTION ,HABITCYCLE)";
-		//String createTRACKER = "CREATE TABLE IF NOT EXISTS TRACKER" + "(HABITID, DATE Date)";
+		String createUSER = "CREATE TABLE IF NOT EXISTS UserDB" + "(USERID INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, NAME VARCHAR(255))";
+		String createHABITS = "CREATE TABLE IF NOT EXISTS HabitDB " + "( HABITID INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL,USERID INT ,HABITNAME VARCHAR(255),HABITDESCRIPTION TEXT(500) ,HABITCYCLE INT)";
+		String createTRACKER = "CREATE TABLE IF NOT EXISTS TrackerDB" + "(HABITID INT, STARTDATE DATE)";
 
-		stmt.executeUpdate(createUSER);
-		//stmt.executeUpdate(createHABITS);
-		//stmt.executeUpdate(createTRACKER);
+		Ustmt.executeUpdate(createUSER);
+		Ustmt.executeUpdate(createHABITS);
+		Tstmt.executeUpdate(createTRACKER);
 
 		//
-		System.out.println("Type your username");
+		/*System.out.println("Type your username");
 		Scanner myObj = new Scanner(System.in);
 		//
-		String username = myObj.nextLine();
-		String query = "INSERT INTO UserDB (NAME) VALUES('" + username + "')";
-		stmt.executeUpdate(query);
+		String username = myObj.nextLine();*/
+		//String query = "INSERT INTO UserDB (NAME) VALUES('" + username + "')";
+		String Habitquery = "INSERT INTO HabitDB (USERID,HABITNAME,HABITDESCRIPTION,HABITCYCLE)"
+			 					+ "VALUES(1,'Drawing','You know just drawing casually',1)";
+		String Trackerquery = "INSERT INTO TrackerDB (HABITID,STARTDATE) " + "VALUES(1,'1000-01-01')";
+		//Ustmt.executeUpdate(query);
+		Hstmt.executeUpdate(Habitquery);
+		Tstmt.executeUpdate(Trackerquery);
 
 
 		//stmt.executeUpdate("INSERT INTO Test (NAME) VALUES('Hello World!')");
 		//stmt.executeUpdate("INSERT INTO Test (NAME) VALUES('Hello again!')");
 		//stmt.executeUpdate("INSERT INTO Test (NAME) VALUES('Bye!')");
 
-		ResultSet selectRS = stmt.executeQuery("SELECT * FROM UserDB");
+		ResultSet selectRS = Ustmt.executeQuery("SELECT * FROM UserDB");
+		ResultSet selectRST = Ustmt.executeQuery("SELECT * FROM HabitDB,UserDB");
+		ResultSet selectRSH = Hstmt.executeQuery("SELECT * FROM TrackerDB as T,HabitDB as H WHERE T.HABITID = H.HABITID");
 		while (selectRS.next()) {
 			System.out.printf("%d, %s\n", selectRS.getInt(1), selectRS.getString(2));
 		}
-		//System.out.printf("%d, %s\n", selectRS.getInt(1), selectRS.getString(2));
-		return result;
-	}
-
-	public static void main(String[] args) throws Exception {
-		System.out.println(new App().getGreeting());
-	}
-
-	/*public String getGreeting() {
-		String result = "";
-		try (Reader reader = Files.newBufferedReader(Paths.get("app/src/main/resources/book.csv"));
-				@SuppressWarnings("deprecation")
-				CSVParser csvParser = new CSVParser(reader,
-						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
-			for (CSVRecord csvRecord : csvParser) {
-				String name = csvRecord.get("author");
-				result += "Hello " + name + "!\n";
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		selectRSH = Ustmt.executeQuery("SELECT * FROM UserDB");
+		while (selectRS.next()) {
+			System.out.printf("%d, %s\n", selectRS.getInt(1), selectRS.getString(2));
 		}
 
-		System.out.println("Enter your name:");
-		Scanner scanner = new Scanner(System.in);
-		String inputString = scanner.nextLine();
-		System.out.println("Hello " + inputString + "!");
-		scanner.close();
+		/*while (selectRSH.next()) {
+			selectRS.getInt(1);
+			System.out.printf("%s, %s, %s, %s, %s\n", selectRS.getString(1), selectRS.getString(2),selectRS.getString(3),selectRS.getString(4),selectRS.getString(5));
+		}*/
+		//System.out.printf("%d, %s\n", selectRS.getInt(1), selectRS.getString(2));
 		return result;
-	}*/
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
+		return "NULL";
+	}
 
-	/*public static void main(String[] args) {
-		System.out.println(new App().getGreeting());
-	}*/
+	public static void main(String[] args) {
+			System.out.println(new App().getGreeting());
+	}
 }
