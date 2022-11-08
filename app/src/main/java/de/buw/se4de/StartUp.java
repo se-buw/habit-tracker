@@ -19,7 +19,10 @@ public class StartUp {
         //System.out.println("Done");
 
 
-        //dbr.inserthabit(new Habit())
-        //Trying Stuff//
+
+    public static void main(String[] args){
+        DBReader dbr = new DBReader("");
+        dbr.gethabits();
+        new MainWindow("Habit Tracker");
     }
 }
