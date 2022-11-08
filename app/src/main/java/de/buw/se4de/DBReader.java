@@ -27,7 +27,7 @@ public class DBReader {
     }
     public void InitializeDB() {
         String createUserDB = "CREATE TABLE IF NOT EXISTS USERDB" + "(Userid INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, Username VARCHAR(255))";
-        String createHabitDB = "CREATE TABLE IF NOT EXISTS HABITDB " + "( Habitid INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL,Userid INT ,Habitname VARCHAR(255),Habitdescription TEXT(500) ,Startdate DATE,Habitcycle INT,Habitcategory VARCHAR(255))";//TODO Habitcycle
+        String createHabitDB = "CREATE TABLE IF NOT EXISTS HABITDB " + "( Habitid INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL,Userid INT ,Habitname VARCHAR(255),Habitdescription TEXT(500) ,Startdate DATE,Habitcycle VARCHAR(255),Habitcategory VARCHAR(255))";//TODO Habitcycle
         String createTrackerDB = "CREATE TABLE IF NOT EXISTS TRACKERDB" + "(Habitid INT, Donedate DATE)";
         //TODO: ints to test the execution of each statement
         try {
@@ -65,7 +65,7 @@ public class DBReader {
             while (selectH.next()) {
                 habvec.add(new Habit(selectH.getInt("Habitid"), selectH.getString("Habitname"),
                         selectH.getString("Habitdescription"), selectH.getDate("Startdate"),
-                        selectH.getInt("Habitcycle"),   Habit.Category.valueOf(selectH.getString("Habitcategory"))));//TODO (Category) I think this works ?
+                       parsestringtocycle(selectH.getString("Habitcycle")),   Habit.Category.valueOf(selectH.getString("Habitcategory"))));
             }
         }catch(SQLException e){
             System.out.printf("Cannot retrieve habits of User %s: %d",u.username,e.getErrorCode());
@@ -74,7 +74,7 @@ public class DBReader {
     }
      public boolean inserthabit(@NotNull Habit h, @NotNull User u){
          String inserthabit = "INSERT INTO HabitDB (Userid,Habitname,Habitdescription,Startdate,Habitcycle,Habitcategory)"
-                 + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "'," + h.cycle +",'" + h.category.name() + "')";
+                 + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "'," + parsecycletostring(h.cycle) +",'" + h.category.name() + "')";//TODO schöner
          String gethabtidid = "Select Habitid FROM HABITDB WHERE Habitname = '"+ h.name  +"' ORDER BY Userid DESC Limit 1";
          try{
              stmt.executeUpdate(inserthabit);
@@ -169,5 +169,20 @@ public class DBReader {
         }
         return dvec;
      }
+    public String parsecycletostring(Vector<Habit.Cycle> cycvec){
+        String temp = "";
+        for(Habit.Cycle c:cycvec){
+            temp += c.value + ",";
+        }
+        return temp.substring(0, temp.length() - 1);
+    }
+    public Vector<Habit.Cycle> parsestringtocycle(String cycle){
+        String[] ar = cycle.split(",");
+        Vector<Habit.Cycle> tempvec= new Vector<>();
+        for(String substring:ar){
+            tempvec.add(Habit.Cycle.valueOf(substring));
+        }
+        return tempvec;
+    }
 }
 //BIG FUCKING TODO!!!!!! Schedule the fucking habits ?

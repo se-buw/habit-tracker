@@ -69,7 +69,6 @@ public class MainWindow extends JFrame{
         changeUser.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-
                 //TODO change to another user
             }
         });
@@ -88,7 +87,7 @@ public class MainWindow extends JFrame{
                 habitFrame.setVisible(true);
                 habitFrame.getContentPane();
                 habitFrame.getContentPane().setLayout(new FlowLayout());
-                JPanel basepanel = new JPanel();//TODO sieht scheiße aus
+                JPanel basepanel = new JPanel();
                 basepanel.setLayout(new GridLayout(5,2,1,1));
                 JLabel label1 = new JLabel("Habitname:");
                 JLabel label2 = new JLabel("Habitdescription:");
