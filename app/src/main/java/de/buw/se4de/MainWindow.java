@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Vector;
 
 
@@ -55,7 +56,7 @@ public class MainWindow extends JFrame{
 
         labelP.add(usernamelabel);
 
-        addcheckboxes(currentuser.habitvec,topP);
+        addcheckboxes(topP);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topP, bottomP);
         startFrame.getContentPane().add(splitPane);
@@ -98,7 +99,7 @@ public class MainWindow extends JFrame{
                         return;
                     currentuser = (User) temp;
                     usernamelabel.setText("User: " + currentuser.username);
-                    addcheckboxes(currentuser.habitvec,topP);
+                    addcheckboxes(topP);
                 }
             });
 
@@ -110,23 +111,26 @@ public class MainWindow extends JFrame{
                     }
                     JFrame habitFrame = new JFrame(appName);
                     habitFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    habitFrame.setSize(300, 200);
+                    habitFrame.setSize((12/6)*300, 200);
 
                     habitFrame.setLocation((startFrame.getLocation().x + startFrame.getWidth() / 2) - habitFrame.getWidth() / 2, (startFrame.getLocation().y + startFrame.getHeight() / 2) - habitFrame.getHeight() / 2);
 
                     habitFrame.setVisible(true);
                     habitFrame.getContentPane().setLayout(new FlowLayout());
                     JPanel basepanel = new JPanel();
-                    basepanel.setLayout(new GridLayout(4, 2));
+                    basepanel.setLayout(new GridLayout(8, 2));
                     JLabel label1 = new JLabel("Habitname:");
                     JLabel label2 = new JLabel("Habitdescription:");
                     JLabel label3 = new JLabel("Habitcatergory:");
+                    JLabel label4 = new JLabel("How often do you want to do the habit");
+                    JLabel label5 = new JLabel(" or on What weekdays ?");
+
 
                     JTextField habitname = new JTextField("");
                     JTextField habitdescription = new JTextField("");
                     JComboBox<Habit.Category> catergory = new JComboBox(Habit.Category.values());
                     JPanel filler = new JPanel();
-
+                    JComboBox<Habit.Cycle> cycle = new JComboBox<>(Habit.Cycle.values());
 
                     JButton submit = new JButton("add Habit");
 
@@ -136,6 +140,10 @@ public class MainWindow extends JFrame{
                     basepanel.add(habitdescription);
                     basepanel.add(label3);
                     basepanel.add(catergory);
+                    basepanel.add(label4);//combo
+                    basepanel.add(label5);//combo
+                    basepanel.add(cycle);
+
                     //cycle
                     basepanel.add(filler);
                     basepanel.add(submit);
@@ -148,11 +156,13 @@ public class MainWindow extends JFrame{
                             String name = habitname.getText();
                             String desc = habitdescription.getText();
                             Habit.Category cat = (Habit.Category) catergory.getSelectedItem();//TODO Cycle
-                            Habit temp = new Habit(name, desc, cat);//TODO richtiegr konstruktor
+                            Habit.Cycle cyc = (Habit.Cycle) cycle.getSelectedItem();
+                            ;//TODO richtiges Umwandeln entwerder kein vec oder wochentage
+                            Habit temp = new Habit(name, desc, cat, cyc);
                             dbr.inserthabit(temp, currentuser);
                             currentuser.habitvec.add(temp);
                             habitFrame.dispose();
-                            addcheckboxes(currentuser.habitvec,topP);
+                            addcheckboxes(topP);
                         }
                     });
                 }
@@ -173,12 +183,12 @@ public class MainWindow extends JFrame{
                         return;
                     currentuser.habitvec.remove((Habit) temp);
                     dbr.deletehabit((Habit)temp);
-                    addcheckboxes(currentuser.habitvec,topP);
+                    addcheckboxes(topP);
                 }
             });
         }//TODO mach das if wieder weg, war nur der Übersicht wegen hier
     }
-    private void addcheckboxes(Vector<Habit> habits,JPanel pane){
+    private void addcheckboxes(JPanel pane){
         //JCheckBox[] temp;
         ItemListener item = new ItemListener() {
             @Override
@@ -189,7 +199,7 @@ public class MainWindow extends JFrame{
         for (Component c:pane.getComponents())
             pane.remove(c);
 
-        for(Habit h:habits){
+        for(Habit h:selectedhabits()){
           JCheckBox temp = new JCheckBox(h.name);
           temp.addItemListener(item);
           pane.add(temp);
@@ -197,8 +207,26 @@ public class MainWindow extends JFrame{
         SwingUtilities.updateComponentTreeUI(pane);
     }
     private Vector<Habit> selectedhabits(){
-        return new Vector<Habit>();
+        Vector<Habit> selectedvector = new Vector<>();
+        for(Habit h:currentuser.habitvec) {
+                if (h.cycle.amount > habitdone(h)) {
+                    selectedvector.add(h);
+                }
+        }
+        return selectedvector;
     }
+    private int habitdone(Habit h){
+        int done = 0;
+        OurCalendar cal = new OurCalendar(new Date());
+            Vector<Date> dateVector = dbr.getdates(h);
+            for(Date d:dateVector){
+                if(cal.isinweek(d)){
+                     done++;
+                }
+            }
+            return done;
+    }
+
 
     //TODO private/public von allen
 }

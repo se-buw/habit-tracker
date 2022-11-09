@@ -13,20 +13,19 @@ public class Habit {
     public Date startdate;
     public Category category;
     public int habitid;
-    public Vector<Cycle> cycle;
+    public Cycle cycle;
 
-    public Habit(String n,String d,Category c){
+
+    public Habit(String n,String d,Category c,Cycle cycvec){
         name = n;
         description = d;
         category = c;
         startdate = new Date();
         habitid = -1;
-        Vector<Cycle> a= new Vector<>();
-        a.add(Cycle.ONE_PER_WEEK);
-        cycle = a;
+        cycle = cycvec;
     }
 
-    public Habit(int id,String n,String d,Date sd,Vector<Cycle> cyc,Category c){
+    public Habit(int id,String n,String d,Date sd,Cycle cyc,Category c){
         name = n;
         description = d;
         category = c;
@@ -35,18 +34,24 @@ public class Habit {
         habitid = id;//TODO add Cycle
     }
     enum Category{
-        Meditation,Studium,Kunst,Sport,Unterhaltung,Soziales,Finanzen,Gesundheit,Arbeit,Ernährung,Zuhause,ImFreien,Anders//TODO weitere Enums(Nutzerdefiniert)
+        Meditation,Studium,Kunst,Sport,Unterhaltung,Soziales,Finanzen,Gesundheit,Arbeit,Ernaehrung,Zuhause,ImFreien,Anderes//TODO weitere Enums(Nutzerdefiniert)
     }
     enum Cycle{
-        ONE_PER_WEEK("One time per week"),TWO_PER_WEEK("Two times per week"),
-        THREE_PER_WEEK("Three times per week"),FOUR_PER_WEEK("Four times per week"),
-        FIVE_PER_WEEK("Five times per week"),SIX_PER_WEEK("Six times per week"),
-        SEVEN_PER_WEEK("Seven times per week"),MONDAY("1"),
-        THUESDAY("2"),WEDNESDAY("3"),THURSDAY("4"),
-        FRYDAY("5"),SATURDAY("6"),SUNDAY("7");
+        ONE_PER_WEEK("One time per week",1),TWO_PER_WEEK("Two times per week",2),
+        THREE_PER_WEEK("Three times per week",3),FOUR_PER_WEEK("Four times per week",4),
+        FIVE_PER_WEEK("Five times per week",5),SIX_PER_WEEK("Six times per week",6),
+        SEVEN_PER_WEEK("Seven times per week",7);/*,MONDAY("Monday"),
+        THUESDAY("Thuesday"),WEDNESDAY("Wednesday"),THURSDAY("Thursday"),
+        FRYDAY("Frayday"),SATURDAY("Saturday"),SUNDAY("Sunday");*/
         public final String value;
-        private Cycle(String v){
+        public final int amount;
+        @Override
+        public String toString(){
+            return value;
+        }
+        private Cycle(String v,int a){
             value = v;
+            amount = a;
         }
     }
     @Override
