@@ -5,6 +5,7 @@ import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Vector;
 
 
@@ -19,42 +20,36 @@ public class MainWindow extends JFrame{
         dbr = D;
         JFrame startFrame = new JFrame(appName);
         startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //this.setContentPane(mainPanel); ???
-
-
-        //this.pack();
+        this.pack();
         startFrame.setVisible(true);
-        startFrame.setSize(800, 700);
+        startFrame.setSize(600, 700);
 
-        startFrame.getContentPane().setLayout(new FlowLayout());
-        JPanel leftP = new JPanel();
-        JPanel rightP = new JPanel();
+        JPanel topP = new JPanel(new GridLayout(20, 1));
+        JPanel bottomP = new JPanel();
+        JToolBar toolbar = new JToolBar();
         JLabel label1 = new JLabel("User: ");
         JButton changeUser = new JButton("change User");
         JButton newUser = new JButton("new User");
         JButton delHabits = new JButton("delete Habits");
         JButton newHabit = new JButton("add new Habit");
-        rightP.add(changeUser);
-        rightP.add(newUser);
-        rightP.add(delHabits);
-        rightP.add(newHabit);
+        toolbar.add(changeUser);
+        toolbar.addSeparator(new Dimension(25, 25));
+        toolbar.add(newUser);
+        toolbar.addSeparator(new Dimension(25, 25));
+        toolbar.add(delHabits);
+        toolbar.addSeparator(new Dimension(25, 25));
+        toolbar.add(newHabit);
+        toolbar.addSeparator(new Dimension(25, 25));
+        bottomP.add(toolbar);
 
         Vector<JCheckBox> CheckBoxes = new Vector<>();
         addCheckbox(CheckBoxes);
-        //DefaultListModel<String> l1 = new DefaultListModel<String>();
-        //addHabitList(l1);
-        //JList<String> HabitList = new JList<>(l1);
-        //leftP.add(HabitList);
-        leftP.add(label1);
+        topP.add(label1);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftP, rightP);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topP, bottomP);
         startFrame.getContentPane().add(splitPane);
 
-        delHabits.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //TODO
-            }
-        });
+
         newUser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -64,17 +59,24 @@ public class MainWindow extends JFrame{
                 currentuser = temp;
                 label1.setText("User: " + currentuser.username);
             }
-
         });
         changeUser.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                //TODO change to another user
+                //https://docs.oracle.com/javase/8/docs/api/javax/swing/JOptionPane.html
+                Object[] possibleValues = Users.toArray();
+                Object temp = JOptionPane.showInputDialog(null,
+                        "Choose your User", "Change User",
+                        JOptionPane.INFORMATION_MESSAGE, null,
+                        possibleValues, possibleValues[0]);
+                currentuser = (User) temp;
+                label1.setText("User: " + currentuser.username);
             }
         });
+        //Todo delete User
+
         newHabit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(currentuser.uid == -1){
+                if (currentuser.uid == -1) {
                     JOptionPane.showMessageDialog(startFrame, "Choose a user first!");
                     return;
                 }
@@ -82,20 +84,19 @@ public class MainWindow extends JFrame{
                 habitFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 habitFrame.setSize(300, 200);
 
-                habitFrame.setLocation((startFrame.getLocation().x + startFrame.getWidth()/2)-habitFrame.getWidth()/2,(startFrame.getLocation().y + startFrame.getHeight()/2)-habitFrame.getHeight()/2);
+                habitFrame.setLocation((startFrame.getLocation().x + startFrame.getWidth() / 2) - habitFrame.getWidth() / 2, (startFrame.getLocation().y + startFrame.getHeight() / 2) - habitFrame.getHeight() / 2);
 
                 habitFrame.setVisible(true);
-                habitFrame.getContentPane();
                 habitFrame.getContentPane().setLayout(new FlowLayout());
                 JPanel basepanel = new JPanel();
-                basepanel.setLayout(new GridLayout(5,2,1,1));
+                basepanel.setLayout(new GridLayout(4, 2));
                 JLabel label1 = new JLabel("Habitname:");
                 JLabel label2 = new JLabel("Habitdescription:");
                 JLabel label3 = new JLabel("Habitcatergory:");
 
                 JTextField habitname = new JTextField("");
                 JTextField habitdescription = new JTextField("");
-                JComboBox<Habit.Category>catergory = new JComboBox(Habit.Category.values());
+                JComboBox<Habit.Category> catergory = new JComboBox(Habit.Category.values());
                 JPanel filler = new JPanel();
 
 
@@ -113,33 +114,28 @@ public class MainWindow extends JFrame{
 
                 habitFrame.getContentPane().add(basepanel);
 
-
                 submit.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         String name = habitname.getText();
                         String desc = habitdescription.getText();
                         Habit.Category cat = (Habit.Category) catergory.getSelectedItem();//TODO Cycle
-                        Habit temp = new Habit(name,desc,cat);
-                        dbr.inserthabit(temp,currentuser);
+                        Habit temp = new Habit(name, desc, cat);
+                        dbr.inserthabit(temp, currentuser);
                         currentuser.habitvec.add(temp);
 
-                        for (Habit h:currentuser.habitvec)
-                            System.out.printf("(%d, %s)",h.habitid,h.name);
+                        for (Habit h : currentuser.habitvec)
+                            System.out.printf("(%d, %s)", h.habitid, h.name);
                         habitFrame.dispose();
                     }
                 });
-                //TODO: add Habit
             }
         });
-    }
-    public void addHabitList(DefaultListModel<String> l1){
-        l1.addElement("Uni");
-        l1.addElement("Sport");
-        //Todo: DB Verknüpfung
-    }
 
-    public void deleteHabit(String Value){
-        //TODO: DB Verknüpfung
+        delHabits.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //TODO
+            }
+        });
     }
 
     public void addCheckbox(Vector<JCheckBox> v1){

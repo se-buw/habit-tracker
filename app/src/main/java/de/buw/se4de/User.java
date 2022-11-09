@@ -28,4 +28,8 @@ public class User {
         return 0;//TODO id zuweisung
     }
 
+    @Override
+    public String toString(){
+        return uid + ": " + username;
+    }
 }
