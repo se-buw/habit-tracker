@@ -40,9 +40,7 @@ public class Habit {
         ONE_PER_WEEK("One time per week",1),TWO_PER_WEEK("Two times per week",2),
         THREE_PER_WEEK("Three times per week",3),FOUR_PER_WEEK("Four times per week",4),
         FIVE_PER_WEEK("Five times per week",5),SIX_PER_WEEK("Six times per week",6),
-        SEVEN_PER_WEEK("Seven times per week",7);/*,MONDAY("Monday"),
-        THUESDAY("Thuesday"),WEDNESDAY("Wednesday"),THURSDAY("Thursday"),
-        FRYDAY("Frayday"),SATURDAY("Saturday"),SUNDAY("Sunday");*/
+        SEVEN_PER_WEEK("Seven times per week",7);
         public final String value;
         public final int amount;
         @Override

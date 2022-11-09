@@ -87,7 +87,7 @@ public class DBReader {
          }
          return true;
      }
-    public User insertuser(String username){
+     public User insertuser(String username){
         String insertuser = "INSERT INTO USERDB (Username) VALUES('"+ username +"')";
         try{
             stmt.executeUpdate(insertuser);
@@ -162,27 +162,26 @@ public class DBReader {
         try{
            ResultSet dates = stmt.executeQuery(datequery);
            while (dates.next()){
-               dvec.add(dates.getDate("Donedate"));
+               dvec.add(new Date(dates.getDate("Donedate").getTime()));
            }
         }catch (SQLException e){
-            System.out.printf("Cannot get dates for this habit: %d\n",e.getErrorCode());
+            System.out.printf("Cannot get the specified habit: %d\n",e.getErrorCode());
         }
         return dvec;
      }
-    public String parsecycletostring(Vector<Habit.Cycle> cycvec){
-        String temp = "";
-        for(Habit.Cycle c:cycvec){
-            temp += c.name() + ",";
+    public boolean donetoday(Habit h) {
+       int hid= 0;
+        String querydate = "SELECT Habitid FROM TRACKERDB WHERE Donedate ='" + new java.sql.Date(new Date().getTime()) + "' AND Habitid = " + h.habitid;
+        try{
+            ResultSet selectH = stmt.executeQuery(querydate);
+            while (selectH.next()) {
+                hid++;
+            }
+        } catch (SQLException e){
+            System.out.printf("Cannot get dates for this habit: %d\n",e.getErrorCode());
         }
-        return temp.substring(0, temp.length() - 1);
-    }
-    public Vector<Habit.Cycle> parsestringtocycle(String cycle){
-        String[] ar = cycle.split(",");
-        Vector<Habit.Cycle> tempvec= new Vector<>();
-        for(String substring:ar){
-            tempvec.add(Habit.Cycle.valueOf(substring));
-        }
-        return tempvec;
+        if(hid > 0)
+            return true;
+        return false;
     }
 }
-//BIG FUCKING TODO!!!!!! Schedule the fucking habits ?

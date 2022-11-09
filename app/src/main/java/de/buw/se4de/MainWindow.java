@@ -57,7 +57,7 @@ public class MainWindow extends JFrame{
 
         JScrollPane scrollPane = new JScrollPane(topP);
 
-        addcheckboxes(currentuser.habitvec, topP);
+        addcheckboxes(topP);
 
         startFrame.getContentPane().add(labelP, BorderLayout.NORTH);
         startFrame.getContentPane().add(leftP, BorderLayout.BEFORE_LINE_BEGINS);
@@ -106,7 +106,7 @@ public class MainWindow extends JFrame{
                     usernamelabel.setText("User: " + currentuser.username);
 
                     useridlabel.setText("UserID: " + currentuser.uid);
-                    addcheckboxes(currentuser.habitvec, topP);
+                    addcheckboxes(topP);
 
                 }
             });
@@ -171,7 +171,7 @@ public class MainWindow extends JFrame{
                             currentuser.habitvec.add(temp);
                             habitFrame.dispose();
 
-                            addcheckboxes(currentuser.habitvec, topP);
+                            addcheckboxes(topP);
                         }
                     });
                 }
@@ -193,17 +193,41 @@ public class MainWindow extends JFrame{
                     currentuser.habitvec.remove((Habit) temp);
                     dbr.deletehabit((Habit)temp);
 
-                    addcheckboxes(currentuser.habitvec, topP);
+                    addcheckboxes(topP);
                 }
             });
         }//TODO mach das if wieder weg, war nur der Übersicht wegen hier
     }
-    private void addcheckboxes(Vector<Habit> habits, JPanel pane){
+    private void addcheckboxes(JPanel pane){
         //JCheckBox[] temp;
         ItemListener item = new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                System.out.printf(e.getStateChange() == 1?"checked":"unchecked");
+                int checkboxhabitid = (int)((JCheckBox)e.getSource()).getClientProperty("id:");
+                Habit thisone = new Habit(-1,"","",new Date(), Habit.Cycle.FIVE_PER_WEEK, Habit.Category.Anderes);
+                for(Habit h:currentuser.habitvec){
+                    if(h.habitid == checkboxhabitid){
+                        thisone = h;
+                    }
+                }
+                if(thisone.habitid >0) {
+                    if(e.getStateChange() == 1) {
+                        dbr.trackhabit(thisone,new Date());
+                        Vector<Date> dates = dbr.getdates(thisone);
+                        for(Date d:dates) {
+                            System.out.println(d);
+                        }
+                        System.out.println("---------");
+                    }else {
+                        dbr.untrackhabit(thisone, new Date());
+                        Vector<Date> dates = dbr.getdates(thisone);
+                        for(Date d:dates) {
+                            System.out.println(d);
+                        }
+                        System.out.println("---------");
+
+                    }
+                }
             }
         };
         for (Component c:pane.getComponents()){
@@ -211,12 +235,15 @@ public class MainWindow extends JFrame{
         }
 
 
-        int i = Math.max(25, currentuser.habitvec.size());
+        int i = Math.max(25,selectedhabits().size());
         pane.setLayout(new GridLayout(i, 1));
-        for(Habit h:habits){
-          JCheckBox temp = new JCheckBox(h.name);
-          temp.addItemListener(item);
-          pane.add(temp);
+        for(Habit h:selectedhabits()){
+            JCheckBox temp = new JCheckBox(h.name);
+            temp.addItemListener(item);
+            temp.putClientProperty("id:",h.habitid);
+            if(dbr.donetoday(h))
+                temp.setSelected(true);
+            pane.add(temp);
         }
         SwingUtilities.updateComponentTreeUI(pane);
     }
@@ -235,7 +262,8 @@ public class MainWindow extends JFrame{
             Vector<Date> dateVector = dbr.getdates(h);
             for(Date d:dateVector){
                 if(cal.isinweek(d)){
-                     done++;
+                    if(!dbr.donetoday(h))
+                        done++;
                 }
             }
             return done;
