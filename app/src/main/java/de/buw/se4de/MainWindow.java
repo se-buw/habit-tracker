@@ -1,5 +1,7 @@
 package de.buw.se4de;
 
+import org.checkerframework.checker.units.qual.C;
+
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
@@ -26,14 +28,17 @@ public class MainWindow extends JFrame{
         startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         startFrame.setVisible(true);
-        startFrame.setSize(600, 700);
+        startFrame.setSize(700, 700);
+        startFrame.setLayout(new BorderLayout());
 
         //Declare
         JPanel labelP = new JPanel();
-        JPanel topP = new JPanel(new GridLayout(20, 1));
+        JPanel topP = new JPanel();
         JPanel bottomP = new JPanel();
-        JToolBar toolbar = new JToolBar();
+        JPanel leftP  = new JPanel();
+        JPanel rightP = new JPanel();
         JLabel usernamelabel = new JLabel("User: ");
+        JLabel useridlabel = new JLabel("UserID: ");
         JButton changeUser = new JButton("change User");
         JButton newUser = new JButton("new User");
         JButton delUser = new JButton("delete current User");
@@ -41,24 +46,23 @@ public class MainWindow extends JFrame{
         JButton newHabit = new JButton("add new Habit");
 
         //add to parent
-        toolbar.add(delUser);
-        toolbar.addSeparator(new Dimension(25, 25));
-        toolbar.add(delHabits);
-        toolbar.addSeparator(new Dimension(25, 25));
-        toolbar.add(changeUser);
-        toolbar.addSeparator(new Dimension(25, 25));
-        toolbar.add(newUser);
-        toolbar.addSeparator(new Dimension(25, 25));
-        toolbar.add(newHabit);
-        toolbar.addSeparator(new Dimension(25, 25));
-        bottomP.add(toolbar);
-
+        bottomP.add(newUser);
+        bottomP.add(newHabit);
+        bottomP.add(changeUser);
+        bottomP.add(delHabits);
+        bottomP.add(delUser);
         labelP.add(usernamelabel);
+        labelP.add(useridlabel);
 
-        addcheckboxes(currentuser.habitvec,topP);
+        JScrollPane scrollPane = new JScrollPane(topP);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topP, bottomP);
-        startFrame.getContentPane().add(splitPane);
+        addcheckboxes(currentuser.habitvec, topP);
+
+        startFrame.getContentPane().add(labelP, BorderLayout.NORTH);
+        startFrame.getContentPane().add(leftP, BorderLayout.BEFORE_LINE_BEGINS);
+        startFrame.getContentPane().add(rightP, BorderLayout.AFTER_LINE_ENDS);
+        startFrame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+        startFrame.getContentPane().add(bottomP, BorderLayout.SOUTH);
         SwingUtilities.updateComponentTreeUI(startFrame);
 
         if(true) {
@@ -79,6 +83,7 @@ public class MainWindow extends JFrame{
                         Users.add(temp);
                         currentuser = temp;
                         usernamelabel.setText("User: " + currentuser.username);
+                        useridlabel.setText("UserID: " + currentuser.uid);
                     }
                 }
             });
@@ -98,7 +103,8 @@ public class MainWindow extends JFrame{
                         return;
                     currentuser = (User) temp;
                     usernamelabel.setText("User: " + currentuser.username);
-                    addcheckboxes(currentuser.habitvec,topP);
+                    useridlabel.setText("UserID: " + currentuser.uid);
+                    addcheckboxes(currentuser.habitvec, topP);
                 }
             });
 
@@ -152,7 +158,7 @@ public class MainWindow extends JFrame{
                             dbr.inserthabit(temp, currentuser);
                             currentuser.habitvec.add(temp);
                             habitFrame.dispose();
-                            addcheckboxes(currentuser.habitvec,topP);
+                            addcheckboxes(currentuser.habitvec, topP);
                         }
                     });
                 }
@@ -173,12 +179,12 @@ public class MainWindow extends JFrame{
                         return;
                     currentuser.habitvec.remove((Habit) temp);
                     dbr.deletehabit((Habit)temp);
-                    addcheckboxes(currentuser.habitvec,topP);
+                    addcheckboxes(currentuser.habitvec, topP);
                 }
             });
         }//TODO mach das if wieder weg, war nur der Übersicht wegen hier
     }
-    private void addcheckboxes(Vector<Habit> habits,JPanel pane){
+    private void addcheckboxes(Vector<Habit> habits, JPanel pane){
         //JCheckBox[] temp;
         ItemListener item = new ItemListener() {
             @Override
@@ -186,9 +192,12 @@ public class MainWindow extends JFrame{
                 System.out.printf(e.getStateChange() == 1?"checked":"unchecked");
             }
         };
-        for (Component c:pane.getComponents())
+        for (Component c:pane.getComponents()){
             pane.remove(c);
+        }
 
+        int i = Math.max(25, currentuser.habitvec.size());
+        pane.setLayout(new GridLayout(i, 1));
         for(Habit h:habits){
           JCheckBox temp = new JCheckBox(h.name);
           temp.addItemListener(item);
