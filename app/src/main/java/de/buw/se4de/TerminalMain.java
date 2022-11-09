@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.Vector;
 
 public class TerminalMain {
+    /*
     Vector<User> Users;
     DBReader dbr;
     User currentuser = new User(-1,"");
@@ -133,5 +134,5 @@ public class TerminalMain {
             }
         }
     }
-
+*/
 }

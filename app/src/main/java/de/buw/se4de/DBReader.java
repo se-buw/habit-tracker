@@ -65,16 +65,16 @@ public class DBReader {
             while (selectH.next()) {
                 habvec.add(new Habit(selectH.getInt("Habitid"), selectH.getString("Habitname"),
                         selectH.getString("Habitdescription"), selectH.getDate("Startdate"),
-                       parsestringtocycle(selectH.getString("Habitcycle")),   Habit.Category.valueOf(selectH.getString("Habitcategory"))));
+                       parsestringtocycle(selectH.getString("Habitcycle")), Habit.Category.valueOf(selectH.getString("Habitcategory"))));
             }
         }catch(SQLException e){
             System.out.printf("Cannot retrieve habits of User %s: %d",u.username,e.getErrorCode());
         }
         return habvec;
     }
-     public boolean inserthabit(@NotNull Habit h, @NotNull User u){
+     public boolean inserthabit(@NotNull Habit h, @NotNull User u){//TODO filter umlaut und wierdes zeug(prepared staement)
          String inserthabit = "INSERT INTO HabitDB (Userid,Habitname,Habitdescription,Startdate,Habitcycle,Habitcategory)"
-                 + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "'," + parsecycletostring(h.cycle) +",'" + h.category.name() + "')";//TODO schöner
+                 + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "','" + parsecycletostring(h.cycle) +"','" + h.category.name() + "')";//TODO schöner
          String gethabtidid = "Select Habitid FROM HABITDB WHERE Habitname = '"+ h.name  +"' ORDER BY Userid DESC Limit 1";
          try{
              stmt.executeUpdate(inserthabit);
@@ -172,7 +172,7 @@ public class DBReader {
     public String parsecycletostring(Vector<Habit.Cycle> cycvec){
         String temp = "";
         for(Habit.Cycle c:cycvec){
-            temp += c.value + ",";
+            temp += c.name() + ",";
         }
         return temp.substring(0, temp.length() - 1);
     }

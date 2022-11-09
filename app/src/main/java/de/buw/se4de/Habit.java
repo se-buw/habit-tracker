@@ -21,6 +21,9 @@ public class Habit {
         category = c;
         startdate = new Date();
         habitid = -1;
+        Vector<Cycle> a= new Vector<>();
+        a.add(Cycle.ONE_PER_WEEK);
+        cycle = a;
     }
 
     public Habit(int id,String n,String d,Date sd,Vector<Cycle> cyc,Category c){
@@ -46,5 +49,10 @@ public class Habit {
             value = v;
         }
     }
-
+    @Override
+    public String toString(){
+        return habitid + ": " + name;
+    }
 }
+
+
