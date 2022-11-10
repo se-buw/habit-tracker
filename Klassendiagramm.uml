@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>/Users/emmelierichter/uni/SE/habit-tracker/app/src/main/java/de/buw/se4de</OriginalElement>
+  <nodes>
+    <node x="652.9124128932772" y="56.71484901501347">de.buw.se4de.MainWindow</node>
+    <node x="760.1624128932772" y="469.17714576599315">de.buw.se4de.User</node>
+    <node x="-121.57424507506738" y="436.17714576599315">de.buw.se4de.Habit</node>
+    <node x="808.4124128932772" y="-153.99217542015154">de.buw.se4de.OurCalendar</node>
+    <node x="-72.57424507506738" y="-69.14454704504044">de.buw.se4de.DBReader</node>
+    <node x="326.16908390910487" y="83.49999999999994">de.buw.se4de.StartUp</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="de.buw.se4de.DBReader" target="de.buw.se4de.User" relationship="CREATE">
+      <point x="0.0" y="181.5" />
+      <point x="46.42575492493262" y="330.4561468803643" />
+      <point x="426.26834014631584" y="330.4561468803643" />
+      <point x="426.26834014631584" y="487.8559194481928" />
+      <point x="-95.52341567312476" y="-63.821226317800324" />
+    </edge>
+    <edge source="de.buw.se4de.DBReader" target="de.buw.se4de.Habit" relationship="CREATE">
+      <point x="-75.19625170500137" y="184.77274923002682" />
+      <point x="-28.42266726151462" y="297.1282021849864" />
+      <point x="-28.42266726151462" y="363.82796816271593" />
+      <point x="-74.84842218644724" y="-115.84375777759465" />
+    </edge>
+    <edge source="de.buw.se4de.StartUp" target="de.buw.se4de.MainWindow" relationship="CREATE">
+      <point x="83.0" y="-0.0" />
+      <point x="576.5966691417465" y="121.49999999999994" />
+      <point x="576.5966691417465" y="121.60596253085428" />
+      <point x="-163.13735602857537" y="-39.608886484159186" />
+    </edge>
+    <edge source="de.buw.se4de.User" target="de.buw.se4de.Habit" relationship="TO_MANY">
+      <point x="-96.5" y="-0.0" />
+      <point x="168.0" y="-0.0" />
+    </edge>
+    <edge source="de.buw.se4de.MainWindow" target="de.buw.se4de.User" relationship="TO_MANY">
+      <point x="84.0" y="104.5" />
+      <point x="48.25" y="-82.5" />
+    </edge>
+    <edge source="de.buw.se4de.MainWindow" target="de.buw.se4de.OurCalendar" relationship="CREATE">
+      <point x="84.0" y="-104.5" />
+      <point x="0.0" y="-71.5" />
+    </edge>
+    <edge source="de.buw.se4de.MainWindow" target="de.buw.se4de.Habit" relationship="CREATE">
+      <point x="-84.0" y="104.5" />
+      <point x="736.9124128932772" y="379.87643280985355" />
+      <point x="150.18721213346873" y="379.87643280985355" />
+      <point x="103.76145720853611" y="-116.62637053465039" />
+    </edge>
+    <edge source="de.buw.se4de.MainWindow" target="de.buw.se4de.User" relationship="CREATE">
+      <point x="20.509812020179197" y="100.55847172785198" />
+      <point x="-15.240187979820803" y="-82.78242132714854" />
+    </edge>
+    <edge source="de.buw.se4de.StartUp" target="de.buw.se4de.DBReader" relationship="CREATE">
+      <point x="-83.0" y="-0.0" />
+      <point x="389.0" y="121.49999999999994" />
+      <point x="389.0" y="112.35545295495956" />
+      <point x="119.0" y="-0.0" />
+    </edge>
+    <edge source="de.buw.se4de.MainWindow" target="de.buw.se4de.DBReader" relationship="TO_ONE">
+      <point x="-84.0" y="-104.5" />
+      <point x="736.9124128932772" y="-53.6597773184067" />
+      <point x="118.18819152375357" y="-166.01523027336626" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.6934030484139121" showDependencies="true" x="484.7592648637218" y="203.49205823650038" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
