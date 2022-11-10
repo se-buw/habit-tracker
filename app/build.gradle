@@ -37,7 +37,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'de.buw.se4de.App'
+    mainClass = 'de.buw.se4de.StartUp'
 }
 
 run {

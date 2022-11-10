@@ -1,15 +1,11 @@
 package de.buw.se4de;
 
-
-import org.h2.util.StringUtils;
-
 import java.util.Date;//sql class also possible
-import java.util.Vector;
 
 public class Habit {
 
     public String name;
-    public String description = "";
+    public String description;
     public Date startdate;
     public Category category;
     public int habitid;
@@ -31,10 +27,10 @@ public class Habit {
         category = c;
         startdate = sd;
         cycle = cyc;
-        habitid = id;//TODO add Cycle
+        habitid = id;
     }
     enum Category{
-        Meditation,Studium,Kunst,Sport,Unterhaltung,Soziales,Finanzen,Gesundheit,Arbeit,Ernaehrung,Zuhause,ImFreien,Anderes//TODO weitere Enums(Nutzerdefiniert)
+        Meditation,Studium,Kunst,Sport,Unterhaltung,Soziales,Finanzen,Gesundheit,Arbeit,Ernaehrung,Zuhause,ImFreien,Anderes
     }
     enum Cycle{
         ONE_PER_WEEK("One time per week",1),TWO_PER_WEEK("Two times per week",2),
@@ -47,7 +43,7 @@ public class Habit {
         public String toString(){
             return value;
         }
-        private Cycle(String v,int a){
+        Cycle(String v,int a){
             value = v;
             amount = a;
         }
