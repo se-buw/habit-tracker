@@ -65,20 +65,24 @@ public class MainWindow extends JFrame{
             dbr.deleteuser(currentuser);
             Users.remove(currentuser);
             currentuser = new User(-1,"");
+            usernamelabel.setText("User: ");
+            useridlabel.setText("ID: ");
 
             });
         newUser.addActionListener(e -> {
             String name = JOptionPane.showInputDialog(startFrame, "Choose you Username!", null);
             if (name != null) {
+                name = replaceUmlaute(name);
                 User temp = dbr.insertuser(name);
                 Users.add(temp);
                 currentuser = temp;
                 usernamelabel.setText("User: " + currentuser.username);
                 useridlabel.setText("UserID: " + currentuser.uid);
+                addcheckboxes(topP);
             }
         });
         changeUser.addActionListener(e->{
-            //https://docs.oracle.com/javase/8/docs/api/javax/swing/JOptionPane.html//TODO link ?
+            //Quelle: https://docs.oracle.com/javase/8/docs/api/javax/swing/JOptionPane.html//
             if (Users.size() < 1) {
                 JOptionPane.showMessageDialog(startFrame, "Create a user first!");
                 return;
@@ -103,7 +107,7 @@ public class MainWindow extends JFrame{
             }
             JFrame habitFrame = new JFrame(appName);
             habitFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            habitFrame.setSize((12/6)*300, 200);
+            habitFrame.setSize((12/6)*300, 220);
 
             habitFrame.setLocation((startFrame.getLocation().x + startFrame.getWidth() / 2) - habitFrame.getWidth() / 2, (startFrame.getLocation().y + startFrame.getHeight() / 2) - habitFrame.getHeight() / 2);
 
@@ -142,8 +146,8 @@ public class MainWindow extends JFrame{
             habitFrame.getContentPane().add(basepanel);
 
             submit.addActionListener(e2-> {
-                String name = habitname.getText();
-                String desc = habitdescription.getText();
+                String name = replaceUmlaute(habitname.getText());
+                String desc = replaceUmlaute(habitdescription.getText());
                 Habit.Category cat = (Habit.Category) catergory.getSelectedItem();
                 Habit.Cycle cyc = (Habit.Cycle) cycle.getSelectedItem();
                 Habit temp = new Habit(name, desc, cat, cyc);
@@ -171,8 +175,8 @@ public class MainWindow extends JFrame{
             dbr.deletehabit((Habit)temp);
             addcheckboxes(topP);
         });
-    }//TODO mach das if wieder weg, war nur der Übersicht wegen hier
-     private void addcheckboxes(JPanel pane){
+    }
+    private void addcheckboxes(JPanel pane){
         ItemListener item = e-> {
                 int checkboxhabitid = (int)((JCheckBox)e.getSource()).getClientProperty("id:");
                 Habit thisone = new Habit(-1,"","",new Date(), Habit.Cycle.FIVE_PER_WEEK, Habit.Category.Anderes);
@@ -182,9 +186,8 @@ public class MainWindow extends JFrame{
                     }
                 }
                 if(thisone.habitid > 0) {
-                    if(e.getStateChange() == ItemEvent.SELECTED) {//TODO changed
+                    if(e.getStateChange() == ItemEvent.SELECTED) {
                         dbr.trackhabit(thisone,new Date());
-                        //TODO after new user change habits, after delete user update label
                     }else {
                         dbr.untrackhabit(thisone, new Date());
                     }
@@ -229,7 +232,17 @@ public class MainWindow extends JFrame{
             }
             return done;
     }
-
-
-    //TODO private/public von allen
+    private static String replaceUmlaute(String output) {
+        //https://stackoverflow.com/questions/32696273/java-replace-german-umlauts
+        return output.replace("\u00fc", "ue")
+                .replace("\u00f6", "oe")
+                .replace("\u00e4", "ae")
+                .replace("\u00df", "ss")
+                .replaceAll("\u00dc(?=[a-z\u00e4\u00f6\u00fc\u00df ])", "Ue")
+                .replaceAll("\u00d6(?=[a-z\u00e4\u00f6\u00fc\u00df ])", "Oe")
+                .replaceAll("\u00c4(?=[a-z\u00e4\u00f6\u00fc\u00df ])", "Ae")
+                .replace("\u00dc", "UE")
+                .replace("\u00d6", "OE")
+                .replace("\u00c4", "AE");
+    }
 }

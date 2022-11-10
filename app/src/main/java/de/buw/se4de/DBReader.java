@@ -19,10 +19,10 @@ public class DBReader {
             connected = true;
         }catch (SQLException sqlE){
             connected = false;
-            System.out.println("Fehler, Programm kann sich nicht mit der Datenbank verbinden");//TODO vernünftige Fehlerbehandlung
+            System.out.println("Fehler, Programm kann sich nicht mit der Datenbank verbinden");
         }catch (ClassNotFoundException classE){
             connected = false;
-            System.out.println("Fehler, can't initialize \"org.h2.Driver\" ");//TODO vernünftige Fehlerbehandlung
+            System.out.println("Fehler, can't initialize \"org.h2.Driver\" ");
         }
     }
     public void InitializeDB() {
@@ -69,7 +69,7 @@ public class DBReader {
         }
         return habvec;
     }
-     public void inserthabit(@NotNull Habit h, @NotNull User u){//TODO filter umlaut und wierdes zeug(prepared staement)
+    public void inserthabit(@NotNull Habit h, @NotNull User u){
          String inserthabit = "INSERT INTO HabitDB (Userid,Habitname,Habitdescription,Startdate,Habitcycle,Habitcategory)"
                  + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "','" + h.cycle.name() +"','" + h.category.name() + "')";
          String gethabtidid = "Select Habitid FROM HABITDB WHERE Habitname = '"+ h.name  +"' ORDER BY Userid DESC Limit 1";
@@ -82,7 +82,7 @@ public class DBReader {
              System.out.printf("Cannot insert Habit: %d\n",e.getErrorCode());
          }
      }
-     public User insertuser(String username){
+    public User insertuser(String username){
         String insertuser = "INSERT INTO USERDB (Username) VALUES('"+ username +"')";
         try{
             stmt.executeUpdate(insertuser);
@@ -95,7 +95,7 @@ public class DBReader {
             return new User(-1,"NULL");
         }
     }
-     public void deletehabit(Habit h){
+    public void deletehabit(Habit h){
          String query = "DELETE FROM HABITDB WHERE Habitid = "+ h.habitid;
          String query2 = "DELETE FROM TRACKERDB WHERE Habitid = "+ h.habitid;
          try {
@@ -105,7 +105,7 @@ public class DBReader {
              System.out.printf("Cannot Delete Habit: %d\n",e.getErrorCode());
          }
      }
-     public void deleteuser(User u){
+    public void deleteuser(User u){
         String duquery = "DELETE FROM USERDB WHERE Userid ="+ u.uid;
         String duhquery = "DELETE FROM HABITDB WHERE Userid = " + u.uid;
         String fhabitquery = "SELECT Habitid FROM HABITDB Where Userid = " + u.uid;
@@ -127,7 +127,7 @@ public class DBReader {
             System.out.printf("Cannot Delete User/Habit/Tracker: %d\n",e.getErrorCode());
         }
      }
-     public void trackhabit(Habit h, Date d){
+    public void trackhabit(Habit h, Date d){
         String query = "INSERT INTO TRACKERDB (HABITID,DONEDATE) VALUES(" + h.habitid + ",'" + new java.sql.Date(d.getTime()) + "')";
         try {
             stmt.executeUpdate(query);
@@ -135,7 +135,7 @@ public class DBReader {
             System.out.printf("Cannot Insert Tracked Habit: %d\n",e.getErrorCode());
         }
      }
-     public void untrackhabit(Habit h, Date d){
+    public void untrackhabit(Habit h, Date d){
         String query = "DELETE FROM TRACKERDB WHERE Habitid =" + h.habitid + " and Donedate = '" + new java.sql.Date(d.getTime()) +"'";
         try{
             stmt.executeUpdate(query);
@@ -143,7 +143,7 @@ public class DBReader {
             System.out.printf("Cannot delete Tracked Habit: %d\n",e.getErrorCode());
         }
      }
-     public Vector<Date> getdates(Habit h){
+    public Vector<Date> getdates(Habit h){
         Vector<Date> dvec = new Vector<>();
         String datequery = "SELECT * FROM TRACKERDB WHERE Habitid = "+ h.habitid;
         try{
