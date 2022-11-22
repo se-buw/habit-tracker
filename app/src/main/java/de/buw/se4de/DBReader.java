@@ -82,11 +82,22 @@ public class DBReader {
              System.out.printf("Cannot insert Habit: %d\n",e.getErrorCode());
          }
      }
+    public void changehabit(@NotNull Habit h, @NotNull User u){
+        String updatehabit = "UPDATE HabitDB SET Userid = "+u.uid+", Habitname='"+h.name+
+                "', Habitdescription='"+h.description+ "',Habitcycle='"
+                +h.cycle.name()+"', Habitcategory='"+h.category.name()+"' WHERE Habitname='"+h.name+"'";
+        try{
+            stmt.executeUpdate(updatehabit);
+        }catch (SQLException e){
+            System.out.printf("Cannot update Habit: %d\n",e.getErrorCode());
+        }
+    }
     public User insertuser(String username){
         String insertuser = "INSERT INTO USERDB (Username) VALUES('"+ username +"')";
         try{
             stmt.executeUpdate(insertuser);
-            String getuserquery = "Select Userid FROM USERDB WHERE Username = '"+ username +"' ORDER BY Userid DESC Limit 1";//BESSERE IDEE ?
+            String getuserquery = "Select Userid FROM USERDB WHERE Username = '"
+                    + username +"' ORDER BY Userid DESC Limit 1";//BESSERE IDEE ?
             ResultSet h2userid = stmt.executeQuery(getuserquery);
             h2userid.next();
             return new User(h2userid.getInt("Userid"),username);
@@ -98,9 +109,9 @@ public class DBReader {
     public void deletehabit(Habit h){
          String query = "DELETE FROM HABITDB WHERE Habitid = "+ h.habitid;
          String query2 = "DELETE FROM TRACKERDB WHERE Habitid = "+ h.habitid;
-         try {
-             stmt.executeUpdate(query);
-             stmt.executeUpdate(query2);
+        try {
+            stmt.executeUpdate(query);
+            stmt.executeUpdate(query2);
          }catch (SQLException e){
              System.out.printf("Cannot Delete Habit: %d\n",e.getErrorCode());
          }

@@ -20,6 +20,15 @@ public class Habit {
         habitid = -1;
         cycle = cycvec;
     }
+    public Habit(int id,String n,String d,Category c,Cycle cycvec){
+        habitid = id;
+        name = n;
+        description = d;
+        category = c;
+        startdate = new Date();
+        habitid = -1;
+        cycle = cycvec;
+    }
 
     public Habit(int id,String n,String d,Date sd,Cycle cyc,Category c){
         name = n;
