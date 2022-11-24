@@ -258,11 +258,6 @@ public class MainWindow extends JFrame{
             JCheckBox saturday = new JCheckBox("Saturday",dayvalue.get(6));
             JCheckBox sunday = new JCheckBox("Sunday",dayvalue.get(0));
 
-            for (Habit.Days d:currenthabit.workdays){
-                System.out.println("Day: "+d.dayofweek);
-                System.out.println("Value: "+d.ex);
-            }
-
             JTextField habitname = new JTextField(currenthabit.name);
             JTextField habitdescription = new JTextField(currenthabit.description);
             //swap currently selected to front of array
