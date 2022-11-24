@@ -12,7 +12,6 @@ public class OurCalendar {
      calendar.setTime(d);
      thisweek = calendar.get(Calendar.WEEK_OF_YEAR);
      day = calendar.get(Calendar.DAY_OF_WEEK);
-     System.out.println(day);
  }
  public boolean isinweek(Date date){
      Calendar cal = Calendar.getInstance();
