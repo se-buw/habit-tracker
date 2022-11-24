@@ -111,27 +111,6 @@ public class Habit {
         for(Days d : v){
             string.append(d.name()).append("/");}
 
-        /*if (Days.MONDAY.ex) {
-            string = string + Days.MONDAY.value;
-        }
-        if (Days.TUESDAY.ex) {
-            string = " |" + string + Days.TUESDAY.value;
-        }
-        if (Days.WEDNESDAY.ex) {
-            string = " |" + string + Days.WEDNESDAY.value;
-        }
-        if (Days.THURSDAY.ex) {
-            string = " |" + string + Days.THURSDAY.value;
-        }
-        if (Days.FRIDAY.ex) {
-            string = " |" + string + Days.FRIDAY.value;
-        }
-        if (Days.SATURDAY.ex) {
-            string = " |" + string + Days.SATURDAY.value;
-        }
-        if (Days.SUNDAY.ex) {
-            string = " |" + string + Days.SUNDAY.value;
-        }*/
         return string.toString();
     }
 }
