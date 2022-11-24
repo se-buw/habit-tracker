@@ -35,6 +35,14 @@ public class Habit {
         cycle = NONE;
         workdays = daysvec;
     }
+    public Habit(int id,String n,String d,Category c,Cycle cycvec){
+        habitid = id;
+        name = n;
+        description = d;
+        category = c;
+        startdate = new Date();
+        cycle = cycvec;
+    }
 
     public Habit(int id,String n,String d,Date sd,Cycle cyc,Category c){
         name = n;

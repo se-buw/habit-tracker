@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Calendar;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
 
@@ -25,7 +26,7 @@ public class MainWindow extends JFrame{
         startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         startFrame.setVisible(true);
-        startFrame.setSize(600, 600);
+        startFrame.setSize(800, 600);
         startFrame.setLayout(new BorderLayout());
 
         //Declare
@@ -41,17 +42,17 @@ public class MainWindow extends JFrame{
         JButton delUser = new JButton("delete current User");
         JButton delHabits = new JButton("delete Habit");
         JButton newHabit = new JButton("add new Habit");
-        JButton changeHabit = new JButton("change a Habit");
+        JButton changeHabit = new JButton("change Habit");
 
         //add to parent
         bottomP.add(newUser);
         bottomP.add(newHabit);
+        bottomP.add(changeHabit);
         bottomP.add(changeUser);
         bottomP.add(delHabits);
         bottomP.add(delUser);
         labelP.add(usernamelabel);
         labelP.add(useridlabel);
-        labelP.add(changeHabit);
 
         JScrollPane scrollPane = new JScrollPane(topP);
 
@@ -207,6 +208,80 @@ public class MainWindow extends JFrame{
             addcheckboxes(topP);
         });
 
+        changeHabit.addActionListener(e->{
+            if (currentuser.uid == -1) {
+                JOptionPane.showMessageDialog(startFrame, "Choose a user first!");
+                return;
+            }
+            //chose habit to change
+            Object[] possibleValues = D.gethabits(currentuser).toArray();
+            Object temp = JOptionPane.showInputDialog(null,
+                    "Choose your Habit", "Change Habit",
+                    JOptionPane.INFORMATION_MESSAGE, null,
+                    possibleValues, possibleValues[0]);
+            if(temp == null) {
+                return;
+            }
+            Habit currenthabit = (Habit) temp;
+            //open Habit window to change the habit
+            JFrame habitFrame = new JFrame(appName);
+            habitFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            habitFrame.setSize((12/6)*300, 220);
+
+            habitFrame.setLocation((startFrame.getLocation().x + startFrame.getWidth() / 2) - habitFrame.getWidth() / 2, (startFrame.getLocation().y + startFrame.getHeight() / 2) - habitFrame.getHeight() / 2);
+
+            habitFrame.setVisible(true);
+            habitFrame.getContentPane().setLayout(new FlowLayout());
+            JPanel basepanel = new JPanel();
+            basepanel.setLayout(new GridLayout(8, 2));
+            JLabel label1 = new JLabel("Habitname:");
+            JLabel label2 = new JLabel("Habitdescription:");
+            JLabel label3 = new JLabel("Habitcatergory:");
+            JLabel label4 = new JLabel("How often do you want to do the habit");
+            JLabel label5 = new JLabel(" or on What weekdays ?");
+
+            JTextField habitname = new JTextField(currenthabit.name);
+            JTextField habitdescription = new JTextField(currenthabit.description);
+            //swap currently selected to front of array
+            Habit.Category[] changed = add2BeginningOfArray(Habit.Category.values(), currenthabit.category);
+            JComboBox<Habit.Category> category = new JComboBox<>(changed);
+            JPanel filler = new JPanel();
+            //same as category
+            Habit.Cycle[] swapped = add2BeginningOfArray(Habit.Cycle.values(),currenthabit.cycle);
+            JComboBox<Habit.Cycle> cycle = new JComboBox<>(swapped);
+
+            JButton submit = new JButton("change Habit");
+
+            basepanel.add(label1);
+            basepanel.add(habitname);
+            basepanel.add(label2);
+            basepanel.add(habitdescription);
+            basepanel.add(label3);
+            basepanel.add(category);
+            basepanel.add(label4);//combo
+            basepanel.add(label5);//combo
+            basepanel.add(cycle);
+
+            basepanel.add(filler);
+            basepanel.add(submit);
+
+
+            habitFrame.getContentPane().add(basepanel);
+
+            submit.addActionListener(e2-> {
+                String name = replaceUmlaute(habitname.getText());
+                String desc = replaceUmlaute(habitdescription.getText());
+                Habit.Category cat = (Habit.Category) category.getSelectedItem();
+                Habit.Cycle cyc = (Habit.Cycle) cycle.getSelectedItem();
+                int currentid = currenthabit.habitid;
+                Habit temphabit = new Habit(currentid,name, desc, cat, cyc);
+                dbr.changehabit(temphabit, currentuser);
+                //currentuser.habitvec.add(temphabit);
+                habitFrame.dispose();
+
+                addcheckboxes(topP);
+            });
+        });
     }
     private void addcheckboxes(JPanel pane){
         ItemListener item = e-> {
@@ -273,6 +348,13 @@ public class MainWindow extends JFrame{
             }
         }
         return done;
+    }
+    public static <T> T[] add2BeginningOfArray(T[] elements, T element)
+    {
+        T[] newArray = Arrays.copyOf(elements, elements.length + 1);
+        newArray[0] = element;
+        System.arraycopy(elements, 0, newArray, 1, elements.length);
+        return newArray;
     }
     private static String replaceUmlaute(String output) {
         //https://stackoverflow.com/questions/32696273/java-replace-german-umlauts
