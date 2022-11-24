@@ -238,17 +238,20 @@ public class MainWindow extends JFrame{
             JLabel label5 = new JLabel(" or on What weekdays ?");
             //saving the booleans of workday in a vector, if the workday is in workdays it shows up as marked in change
             Vector<Boolean> dayvalue =  new Vector<>();
-            for (int i=1;i<=7;i++){
-                for (Habit.Days d:currenthabit.workdays){
-                    if (d.dayofweek==i){
-                        dayvalue.add(true);
+                for (int i = 1; i <= 7; i++) {
+                    if (currenthabit.workdays.size()>0) {
+                        for (Habit.Days d : currenthabit.workdays) {
+                            if (d.dayofweek == i) {
+                                dayvalue.add(true);
+                            }
+                        }
+                    }
+
+                    //checking if for this i was an entry made in dayvalue
+                    if (dayvalue.size() < i) {
+                        dayvalue.add(false);
                     }
                 }
-                //checking if for this i was an entry made in dayvalue
-                if (dayvalue.size()<i){
-                    dayvalue.add(false);
-                }
-            }
             //now filling in the checkboxes with their boolean
             JCheckBox monday = new JCheckBox("Monday",dayvalue.get(1));
             JCheckBox tuesday = new JCheckBox("Tuesday",dayvalue.get(2));

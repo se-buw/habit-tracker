@@ -84,7 +84,7 @@ public class DBReader {
     }
     public void inserthabit(@NotNull Habit h, @NotNull User u){
         String chosen = "";
-        if(h.workdays.size() == 0){chosen = h.cycle.name();}
+        if(h.workdays.isEmpty()){chosen = h.cycle.name();}
         else {chosen = Habit.print(h.workdays);}
          String inserthabit = "INSERT INTO HabitDB (Userid,Habitname,Habitdescription,Startdate,Habitcycle,Habitcategory)"
                  + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "','" + chosen + "','" + h.category.name() + "')";
@@ -101,7 +101,7 @@ public class DBReader {
      //changes name only after restart
     public void changehabit(@NotNull Habit h, @NotNull User u){
         String chosen = "";
-        if(h.workdays.size() == 0){chosen = h.cycle.name();}
+        if(h.workdays==null || h.workdays.isEmpty()){chosen = h.cycle.name();}
         else {chosen=Habit.print(h.workdays);}
         String updatehabit = "UPDATE HabitDB SET Userid = "+u.uid+", Habitname='"+h.name+
                 "', Habitdescription='"+h.description+ "',Habitcycle='"
