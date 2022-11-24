@@ -5,10 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Calendar;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Vector;
+import java.util.*;
 
 
 public class MainWindow extends JFrame{
@@ -226,19 +223,45 @@ public class MainWindow extends JFrame{
             //open Habit window to change the habit
             JFrame habitFrame = new JFrame(appName);
             habitFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            habitFrame.setSize((12/6)*300, 220);
+            habitFrame.setSize((12/6)*300, 280);
 
             habitFrame.setLocation((startFrame.getLocation().x + startFrame.getWidth() / 2) - habitFrame.getWidth() / 2, (startFrame.getLocation().y + startFrame.getHeight() / 2) - habitFrame.getHeight() / 2);
 
             habitFrame.setVisible(true);
             habitFrame.getContentPane().setLayout(new FlowLayout());
             JPanel basepanel = new JPanel();
-            basepanel.setLayout(new GridLayout(8, 2));
+            basepanel.setLayout(new GridLayout(12, 2));
             JLabel label1 = new JLabel("Habitname:");
             JLabel label2 = new JLabel("Habitdescription:");
             JLabel label3 = new JLabel("Habitcatergory:");
             JLabel label4 = new JLabel("How often do you want to do the habit");
             JLabel label5 = new JLabel(" or on What weekdays ?");
+            //saving the booleans of workday in a vector, if the workday is in workdays it shows up as marked in change
+            Vector<Boolean> dayvalue =  new Vector<>();
+            for (int i=1;i<=7;i++){
+                for (Habit.Days d:currenthabit.workdays){
+                    if (d.dayofweek==i){
+                        dayvalue.add(true);
+                    }
+                }
+                //checking if for this i was an entry made in dayvalue
+                if (dayvalue.size()<i){
+                    dayvalue.add(false);
+                }
+            }
+            //now filling in the checkboxes with their boolean
+            JCheckBox monday = new JCheckBox("Monday",dayvalue.get(1));
+            JCheckBox tuesday = new JCheckBox("Tuesday",dayvalue.get(2));
+            JCheckBox wednesday = new JCheckBox("Wednesday",dayvalue.get(3));
+            JCheckBox thursday = new JCheckBox("Thursday",dayvalue.get(4));
+            JCheckBox friday = new JCheckBox("Friday",dayvalue.get(5));
+            JCheckBox saturday = new JCheckBox("Saturday",dayvalue.get(6));
+            JCheckBox sunday = new JCheckBox("Sunday",dayvalue.get(0));
+
+            for (Habit.Days d:currenthabit.workdays){
+                System.out.println("Day: "+d.dayofweek);
+                System.out.println("Value: "+d.ex);
+            }
 
             JTextField habitname = new JTextField(currenthabit.name);
             JTextField habitdescription = new JTextField(currenthabit.description);
@@ -261,6 +284,13 @@ public class MainWindow extends JFrame{
             basepanel.add(label4);//combo
             basepanel.add(label5);//combo
             basepanel.add(cycle);
+            basepanel.add(monday);
+            basepanel.add(tuesday);
+            basepanel.add(wednesday);
+            basepanel.add(thursday);
+            basepanel.add(friday);
+            basepanel.add(saturday);
+            basepanel.add(sunday);
 
             basepanel.add(filler);
             basepanel.add(submit);
@@ -273,10 +303,24 @@ public class MainWindow extends JFrame{
                 String desc = replaceUmlaute(habitdescription.getText());
                 Habit.Category cat = (Habit.Category) category.getSelectedItem();
                 Habit.Cycle cyc = (Habit.Cycle) cycle.getSelectedItem();
+                Vector<Habit.Days> daysvec = new Vector<>();
+
+                if(monday.isSelected()){daysvec.add(Habit.Days.MONDAY);}
+                if(tuesday.isSelected()){daysvec.add(Habit.Days.TUESDAY);}
+                if(wednesday.isSelected()){daysvec.add(Habit.Days.WEDNESDAY);}
+                if(thursday.isSelected()){daysvec.add(Habit.Days.THURSDAY);}
+                if(friday.isSelected()){daysvec.add(Habit.Days.FRIDAY);}
+                if(saturday.isSelected()){daysvec.add(Habit.Days.SATURDAY);}
+                if(sunday.isSelected()){daysvec.add(Habit.Days.SUNDAY);}
+
                 int currentid = currenthabit.habitid;
-                Habit temphabit = new Habit(currentid,name, desc, cat, cyc);
+                Habit temphabit;
+                if(cycle.getSelectedItem() == Habit.Cycle.NONE){temphabit = new Habit(currentid, name, desc, cat, daysvec);}
+                else{temphabit = new Habit(currentid,name, desc, cat, cyc);}
+
                 dbr.changehabit(temphabit, currentuser);
-                //currentuser.habitvec.add(temphabit);
+                for(Habit.Days el : Habit.Days.values()){el.ex = false;}
+                currentuser.habitvec.add(temphabit);
                 habitFrame.dispose();
 
                 addcheckboxes(topP);

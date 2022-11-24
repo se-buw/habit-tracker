@@ -13,7 +13,9 @@ public class Habit {
     public Category category;
     public int habitid;
     public Cycle cycle;
+
     public Vector<Days> workdays;
+    //a day gets inserted with ex= false, sunday being 1 and Saturday 7, no starting with 0 :(
 
 
     public Habit(String n,String d,Category c,Cycle cycvec){
@@ -33,6 +35,14 @@ public class Habit {
         startdate = new Date();
         habitid = -1;
         cycle = NONE;
+        workdays = daysvec;
+    }
+    public Habit(int id,String n,String d,Category c,Vector<Days> daysvec){
+        habitid = id;
+        name = n;
+        description = d;
+        category = c;
+        startdate = new Date();
         workdays = daysvec;
     }
     public Habit(int id,String n,String d,Category c,Cycle cycvec){

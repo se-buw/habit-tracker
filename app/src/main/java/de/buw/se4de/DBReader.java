@@ -100,9 +100,12 @@ public class DBReader {
      }
      //changes name only after restart
     public void changehabit(@NotNull Habit h, @NotNull User u){
+        String chosen = "";
+        if(h.workdays.size() == 0){chosen = h.cycle.name();}
+        else {chosen=Habit.print(h.workdays);}
         String updatehabit = "UPDATE HabitDB SET Userid = "+u.uid+", Habitname='"+h.name+
                 "', Habitdescription='"+h.description+ "',Habitcycle='"
-                +h.cycle.name()+"', Habitcategory='"+h.category.name()+"' WHERE Habitid="+h.habitid+"";
+                +chosen+"', Habitcategory='"+h.category.name()+"' WHERE Habitid="+h.habitid+"";
         try{
             stmt.executeUpdate(updatehabit);
         }catch (SQLException e){
