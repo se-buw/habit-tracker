@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -24,7 +25,7 @@ public class MainWindow extends JFrame{
         startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         startFrame.setVisible(true);
-        startFrame.setSize(700, 700);
+        startFrame.setSize(600, 600);
         startFrame.setLayout(new BorderLayout());
 
         //Declare
@@ -40,6 +41,7 @@ public class MainWindow extends JFrame{
         JButton delUser = new JButton("delete current User");
         JButton delHabits = new JButton("delete Habit");
         JButton newHabit = new JButton("add new Habit");
+        JButton changeHabit = new JButton("change a Habit");
 
         //add to parent
         bottomP.add(newUser);
@@ -49,6 +51,7 @@ public class MainWindow extends JFrame{
         bottomP.add(delUser);
         labelP.add(usernamelabel);
         labelP.add(useridlabel);
+        labelP.add(changeHabit);
 
         JScrollPane scrollPane = new JScrollPane(topP);
 
@@ -107,23 +110,30 @@ public class MainWindow extends JFrame{
             }
             JFrame habitFrame = new JFrame(appName);
             habitFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            habitFrame.setSize((12/6)*300, 220);
+            habitFrame.setSize((12/6)*300, 280);
 
             habitFrame.setLocation((startFrame.getLocation().x + startFrame.getWidth() / 2) - habitFrame.getWidth() / 2, (startFrame.getLocation().y + startFrame.getHeight() / 2) - habitFrame.getHeight() / 2);
 
             habitFrame.setVisible(true);
             habitFrame.getContentPane().setLayout(new FlowLayout());
             JPanel basepanel = new JPanel();
-            basepanel.setLayout(new GridLayout(8, 2));
+            basepanel.setLayout(new GridLayout(12, 2));
             JLabel label1 = new JLabel("Habitname:");
             JLabel label2 = new JLabel("Habitdescription:");
-            JLabel label3 = new JLabel("Habitcatergory:");
+            JLabel label3 = new JLabel("Habitcategory:");
             JLabel label4 = new JLabel("How often do you want to do the habit");
             JLabel label5 = new JLabel(" or on What weekdays ?");
+            JCheckBox monday = new JCheckBox("Monday");
+            JCheckBox tuesday = new JCheckBox("Tuesday");
+            JCheckBox wednesday = new JCheckBox("Wednesday");
+            JCheckBox thursday = new JCheckBox("Thursday");
+            JCheckBox friday = new JCheckBox("Friday");
+            JCheckBox saturday = new JCheckBox("Saturday");
+            JCheckBox sunday = new JCheckBox("Sunday");
 
             JTextField habitname = new JTextField("");
             JTextField habitdescription = new JTextField("");
-            JComboBox<Habit.Category> catergory = new JComboBox<>(Habit.Category.values());
+            JComboBox<Habit.Category> category = new JComboBox<>(Habit.Category.values());
             JPanel filler = new JPanel();
             JComboBox<Habit.Cycle> cycle = new JComboBox<>(Habit.Cycle.values());
 
@@ -134,10 +144,17 @@ public class MainWindow extends JFrame{
             basepanel.add(label2);
             basepanel.add(habitdescription);
             basepanel.add(label3);
-            basepanel.add(catergory);
+            basepanel.add(category);
             basepanel.add(label4);//combo
             basepanel.add(label5);//combo
             basepanel.add(cycle);
+            basepanel.add(monday);
+            basepanel.add(tuesday);
+            basepanel.add(wednesday);
+            basepanel.add(thursday);
+            basepanel.add(friday);
+            basepanel.add(saturday);
+            basepanel.add(sunday);
 
             basepanel.add(filler);
             basepanel.add(submit);
@@ -148,10 +165,24 @@ public class MainWindow extends JFrame{
             submit.addActionListener(e2-> {
                 String name = replaceUmlaute(habitname.getText());
                 String desc = replaceUmlaute(habitdescription.getText());
-                Habit.Category cat = (Habit.Category) catergory.getSelectedItem();
+                Habit.Category cat = (Habit.Category) category.getSelectedItem();
                 Habit.Cycle cyc = (Habit.Cycle) cycle.getSelectedItem();
-                Habit temp = new Habit(name, desc, cat, cyc);
+                Vector<Habit.Days> daysvec = new Vector<>();
+
+                if(monday.isSelected()){daysvec.add(Habit.Days.MONDAY);}
+                if(tuesday.isSelected()){daysvec.add(Habit.Days.TUESDAY);}
+                if(wednesday.isSelected()){daysvec.add(Habit.Days.WEDNESDAY);}
+                if(thursday.isSelected()){daysvec.add(Habit.Days.THURSDAY);}
+                if(friday.isSelected()){daysvec.add(Habit.Days.FRIDAY);}
+                if(saturday.isSelected()){daysvec.add(Habit.Days.SATURDAY);}
+                if(sunday.isSelected()){daysvec.add(Habit.Days.SUNDAY);}
+
+                Habit temp;
+                if(cycle.getSelectedItem() == Habit.Cycle.NONE){temp = new Habit(name, desc, cat, daysvec);}
+                else{temp = new Habit(name, desc, cat, cyc);}
+
                 dbr.inserthabit(temp, currentuser);
+                for(Habit.Days el : Habit.Days.values()){el.ex = false;}
                 currentuser.habitvec.add(temp);
                 habitFrame.dispose();
 
@@ -161,7 +192,7 @@ public class MainWindow extends JFrame{
 
         delHabits.addActionListener(e-> {
             if (currentuser.habitvec.size() < 1) {
-                JOptionPane.showMessageDialog(startFrame, "Create a habbit first!");
+                JOptionPane.showMessageDialog(startFrame, "Create a habit first!");
                 return;
             }
             Object[] possibleValues = currentuser.habitvec.toArray();
@@ -175,6 +206,7 @@ public class MainWindow extends JFrame{
             dbr.deletehabit((Habit)temp);
             addcheckboxes(topP);
         });
+
     }
     private void addcheckboxes(JPanel pane){
         ItemListener item = e-> {
@@ -191,7 +223,6 @@ public class MainWindow extends JFrame{
                     }else {
                         dbr.untrackhabit(thisone, new Date());
                     }
-                    //Vector<Date> dates = dbr.getdates(thisone);
                 }
         };
         for (Component c:pane.getComponents()){
@@ -213,9 +244,19 @@ public class MainWindow extends JFrame{
     }
     private Vector<Habit> selectedhabits(){
         Vector<Habit> selectedvector = new Vector<>();
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
         for(Habit h:currentuser.habitvec) {
                 if (h.cycle.amount > habitdone(h)) {
                     selectedvector.add(h);
+                }
+                else if(h.workdays.size()>0){
+                    for(Habit.Days d : h.workdays){
+                        if(day == d.dayofweek){
+                            selectedvector.add(h);
+                            break;
+                        }
+                    }
                 }
         }
         return selectedvector;
@@ -223,14 +264,15 @@ public class MainWindow extends JFrame{
     private int habitdone(Habit h){
         int done = 0;
         OurCalendar cal = new OurCalendar(new Date());
-            Vector<Date> dateVector = dbr.getdates(h);
-            for(Date d:dateVector){
-                if(cal.isinweek(d)){
-                    if(!dbr.donetoday(h))
-                        done++;
+        Vector<Date> dateVector = dbr.getdates(h);
+        for(Date d:dateVector){
+            if(cal.isinweek(d)){
+                if(!dbr.donetoday(h)){
+                    done++;
                 }
             }
-            return done;
+        }
+        return done;
     }
     private static String replaceUmlaute(String output) {
         //https://stackoverflow.com/questions/32696273/java-replace-german-umlauts

@@ -57,12 +57,25 @@ public class DBReader {
     public Vector<Habit> gethabits(User u) {
         Vector<Habit> habvec= new Vector<>();
         String gethabitsquery = "Select * FROM HABITDB WHERE Userid = " + u.uid;
+        Vector<Habit.Days> dayvec = new Vector<>();
         try {
             ResultSet selectH = stmt.executeQuery(gethabitsquery);
             while (selectH.next()) {
+                if(check(selectH.getString("Habitcycle"))){
+                    String string = selectH.getString("Habitcycle");
+                    String[] array = string.split("/");
+                    for(String s : array){dayvec.add(Habit.Days.valueOf(s));}
+                    habvec.add(new Habit(selectH.getInt("Habitid"), selectH.getString("Habitname"),
+                            selectH.getString("Habitdescription"), selectH.getDate("Startdate"),
+                            dayvec, Habit.Category.valueOf(selectH.getString("Habitcategory"))));
+                }
+
+                else{
                 habvec.add(new Habit(selectH.getInt("Habitid"), selectH.getString("Habitname"),
                         selectH.getString("Habitdescription"), selectH.getDate("Startdate"),
                        Habit.Cycle.valueOf(selectH.getString("Habitcycle")), Habit.Category.valueOf(selectH.getString("Habitcategory"))));
+                dayvec.clear();
+                }
             }
         }catch(SQLException e){
             System.out.printf("Cannot retrieve habits of User %s: %d",u.username,e.getErrorCode());
@@ -70,8 +83,11 @@ public class DBReader {
         return habvec;
     }
     public void inserthabit(@NotNull Habit h, @NotNull User u){
+        String chosen = "";
+        if(h.workdays.size() == 0){chosen = h.cycle.name();}
+        else {chosen = Habit.print(h.workdays);}
          String inserthabit = "INSERT INTO HabitDB (Userid,Habitname,Habitdescription,Startdate,Habitcycle,Habitcategory)"
-                 + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "','" + h.cycle.name() +"','" + h.category.name() + "')";
+                 + "VALUES("+ u.uid +",'" + h.name + "','" + h.description + "','"+ new java.sql.Date(h.startdate.getTime()) + "','" + chosen + "','" + h.category.name() + "')";
          String gethabtidid = "Select Habitid FROM HABITDB WHERE Habitname = '"+ h.name  +"' ORDER BY Userid DESC Limit 1";
          try{
              stmt.executeUpdate(inserthabit);
@@ -168,5 +184,9 @@ public class DBReader {
             System.out.printf("Cannot get dates for this habit: %d\n",e.getErrorCode());
         }
         return hid > 0;
+    }
+    public boolean check(String s){
+            return s.contains("/");
+
     }
 }
