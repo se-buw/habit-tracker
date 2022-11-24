@@ -26,7 +26,6 @@ public class Habit {
         description = d;
         category = c;
         startdate = new Date();
-        habitid = -1;
         cycle = cycvec;
     }
 

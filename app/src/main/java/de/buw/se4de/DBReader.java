@@ -82,10 +82,11 @@ public class DBReader {
              System.out.printf("Cannot insert Habit: %d\n",e.getErrorCode());
          }
      }
+     //changes name only after restart
     public void changehabit(@NotNull Habit h, @NotNull User u){
         String updatehabit = "UPDATE HabitDB SET Userid = "+u.uid+", Habitname='"+h.name+
                 "', Habitdescription='"+h.description+ "',Habitcycle='"
-                +h.cycle.name()+"', Habitcategory='"+h.category.name()+"' WHERE Habitname='"+h.name+"'";
+                +h.cycle.name()+"', Habitcategory='"+h.category.name()+"' WHERE Habitid="+h.habitid+"";
         try{
             stmt.executeUpdate(updatehabit);
         }catch (SQLException e){
