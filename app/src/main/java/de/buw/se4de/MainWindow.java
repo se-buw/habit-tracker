@@ -62,6 +62,7 @@ public class MainWindow extends JFrame{
         startFrame.getContentPane().add(bottomP, BorderLayout.SOUTH);
         SwingUtilities.updateComponentTreeUI(startFrame);
 
+        //delete user button
         delUser.addActionListener(e-> {
             if (currentuser.uid < 1) {
                 JOptionPane.showMessageDialog(startFrame, "Create new user first!");
@@ -74,6 +75,7 @@ public class MainWindow extends JFrame{
             useridlabel.setText("ID: ");
 
             });
+        //create new user
         newUser.addActionListener(e -> {
             String name = JOptionPane.showInputDialog(startFrame, "Choose you Username!", null);
             if (name != null) {
@@ -86,6 +88,8 @@ public class MainWindow extends JFrame{
                 addcheckboxes(topP);
             }
         });
+
+        //change user
         changeUser.addActionListener(e->{
             //Quelle: https://docs.oracle.com/javase/8/docs/api/javax/swing/JOptionPane.html//
             if (Users.size() < 1) {
@@ -105,6 +109,7 @@ public class MainWindow extends JFrame{
             addcheckboxes(topP);
         });
 
+        // add new habit
         newHabit.addActionListener(e->{
             if (currentuser.uid == -1) {
                 JOptionPane.showMessageDialog(startFrame, "Choose a user first!");
@@ -163,7 +168,7 @@ public class MainWindow extends JFrame{
 
 
             habitFrame.getContentPane().add(basepanel);
-
+            //submit new habit and add to database
             submit.addActionListener(e2-> {
                 String name = replaceUmlaute(habitname.getText());
                 String desc = replaceUmlaute(habitdescription.getText());
@@ -192,6 +197,7 @@ public class MainWindow extends JFrame{
             });
         });
 
+        //delete habit
         delHabits.addActionListener(e-> {
             if (currentuser.habitvec.size() < 1) {
                 JOptionPane.showMessageDialog(startFrame, "Create a habit first!");
@@ -209,6 +215,7 @@ public class MainWindow extends JFrame{
             addcheckboxes(topP);
         });
 
+        //edit already created habit
         changeHabit.addActionListener(e->{
             if (currentuser.uid == -1) {
                 JOptionPane.showMessageDialog(startFrame, "Choose a user first!");
@@ -299,7 +306,7 @@ public class MainWindow extends JFrame{
 
 
             habitFrame.getContentPane().add(basepanel);
-
+            //submit newly changed habit
             submit.addActionListener(e2-> {
                 String name = replaceUmlaute(habitname.getText());
                 String desc = replaceUmlaute(habitdescription.getText());
