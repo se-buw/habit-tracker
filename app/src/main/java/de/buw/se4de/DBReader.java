@@ -5,11 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.*;
 import java.util.Date;
 import java.util.Vector;
-
+/* class for reading database */
 public class DBReader {
     Connection DBconnection;
     Statement stmt;
     public boolean connected;
+    //read database from file
     public DBReader(String connpath){
         try {
             Class.forName("org.h2.Driver");
@@ -25,6 +26,7 @@ public class DBReader {
             System.out.println("Fehler, can't initialize \"org.h2.Driver\" ");
         }
     }
+    // create database
     public void InitializeDB() {
         String createUserDB = "CREATE TABLE IF NOT EXISTS USERDB" + "(Userid INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, Username VARCHAR(255))";
         String createHabitDB = "CREATE TABLE IF NOT EXISTS HABITDB " + "( Habitid INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL,Userid INT ,Habitname VARCHAR(255),Habitdescription TEXT(500) ,Startdate DATE,Habitcycle VARCHAR(255),Habitcategory VARCHAR(255))";

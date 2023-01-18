@@ -63,6 +63,10 @@ public class MainWindow extends JFrame{
         SwingUtilities.updateComponentTreeUI(startFrame);
 
         delUser.addActionListener(e-> {
+            if (currentuser.uid < 1) {
+                JOptionPane.showMessageDialog(startFrame, "Create new user first!");
+                return;
+            }
             dbr.deleteuser(currentuser);
             Users.remove(currentuser);
             currentuser = new User(-1,"");
