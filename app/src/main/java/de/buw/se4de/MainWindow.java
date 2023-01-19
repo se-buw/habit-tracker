@@ -221,6 +221,10 @@ public class MainWindow extends JFrame{
                 JOptionPane.showMessageDialog(startFrame, "Choose a user first!");
                 return;
             }
+            if (currentuser.habitvec.size() < 1) {
+                JOptionPane.showMessageDialog(startFrame, "Create a habit first!");
+                return;
+            }
             //chose habit to change
             Object[] possibleValues = D.gethabits(currentuser).toArray();
             Object temp = JOptionPane.showInputDialog(null,
@@ -333,6 +337,8 @@ public class MainWindow extends JFrame{
                 habitFrame.dispose();
 
                 addcheckboxes(topP);
+                SwingUtilities.updateComponentTreeUI(startFrame);
+
             });
         });
     }
