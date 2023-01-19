@@ -133,6 +133,7 @@ class AppTest {
 		assertTrue(habits.isEmpty(), "Habits should be empty after deletion");
 
 		dbr.deleteuser(testUser);
+		uservec.remove(testUser);
 		dbr.getusers(uservec);
 		boolean user_deleted = true;
 		for (User user : uservec) {
